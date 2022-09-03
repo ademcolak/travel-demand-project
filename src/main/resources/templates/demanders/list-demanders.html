@@ -1,0 +1,112 @@
+  <!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
+
+  <title>Seyahat Talebi</title>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h3>Seyahat Talepleri</h3>
+  <hr>
+
+  <div>
+    Kullanici: <span sec:authentication="name"></span>
+    <br>
+    Yetkileri: <span sec:authentication="principal.authorities"></span>
+    <br><br>
+  </div>
+
+  <form th:action="@{/demanders/search}" class="form-inline">
+    <a th:href="@{/demanders/showFormForAdd}"
+       class="btn btn-primary btn-sm mb-3">
+      Seyehat Talebi Olusturma
+    </a>
+
+    <input class="form-control mr-sm-2 mb-3" type="search" name="demanderName"
+           placeholder="İsime göre ara" style="margin-left: 29px;"/>
+    <button class="btn btn-success mb-4" type="submit">Ara</button>
+  </form>
+
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th>Sicil No</th>
+      <th>İsim</th>
+      <th>Baslangic Tarihi</th>
+      <th>Bitis Tarihi</th>
+      <th>İstikamet</th>
+      <th>Tahmini Masraf</th>
+
+
+      <div sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')">
+        <th>Eylemler</th>
+      </div>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="tempDemander : ${demander}">
+      <td th:text="${tempDemander.sicilNo}"/>
+      <td th:text="${tempDemander.isim}"/>
+      <td th:text="${tempDemander.basTarih}"/>
+      <td th:text="${tempDemander.sonTarih}"/>
+      <td th:text="${tempDemander.istikamet}"/>
+      <td th:text="${tempDemander.tahminiMasraf}"/>
+
+      <div sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')">
+
+        <td>
+          <div sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')">
+
+            <!-- Add "update" button/link -->
+            <a th:href="@{/demanders/showFormForUpdate(demanderId=${tempDemander.id})}"
+               class="btn btn-info btn-sm">
+              Talebi Güncelle
+            </a>
+            </div>
+
+            <div sec:authorize="hasRole('ROLE_ADMIN')">
+
+            <!-- Add "delete" button/link -->
+            <a th:href="@{/demanders/delete(demanderId=${tempDemander.id})}"
+               class="btn btn-danger btn-sm"
+               onclick="if (!(confirm('Kullanıcıyı Silmek İstediğinden Emin Misin?'))){return false
+}">
+              Talebi Sil
+            </a>
+          </div>
+        </td>
+      </div>
+      
+
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- Add a logout button -->
+  <form action="#" th:action="@{/logout}"
+        method="POST">
+
+    <input type="submit" value="Logout" class="btn btn-outline-primary mt-2" />
+
+  </form>
+
+</div>
+
+</body>
+</html>
+
+
